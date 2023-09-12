@@ -26,6 +26,11 @@ public class Vehicle {
         this.moveDate = moveDate;
     }
 
+    public void importWorkSchedules(ArrayList<WorkSchedule> workSchedules) {
+        // Add work schedules from the CSV files to the vehicle's schedule
+        this.vehicleSchedule.addAll(workSchedules);
+    }
+
     /**
      * Determine whether Vehicle is available
      */

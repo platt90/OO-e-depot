@@ -20,6 +20,11 @@ public class Driver {
         this.depotNumber = depotNumber;
     }
 
+    public void importWorkSchedules(ArrayList<WorkSchedule> workSchedules) {
+        // Add work schedules from the CSV files to the driver's schedule
+        this.driverSchedule.addAll(workSchedules);
+    }
+
     public boolean isAvailable(Driver driver) {
         for (WorkSchedule driverSchedule : driverSchedule) {
             driverSchedule.updateJobState();

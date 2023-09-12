@@ -1,17 +1,10 @@
 package ljmu.depots;
 
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.function.Function;
 
 import platform.Sys;
@@ -23,7 +16,7 @@ public class Depot {
     private ArrayList<Driver> drivers = new ArrayList<Driver>();
     private ArrayList<Truck> trucks = new ArrayList<Truck>();
     private ArrayList<Tanker> tankers = new ArrayList<Tanker>();
-    private ArrayList<WorkSchedule> workSchedules = new ArrayList<WorkSchedule>();
+    public ArrayList<WorkSchedule> workSchedules = new ArrayList<WorkSchedule>();
 
     Scanner userInput = new Scanner(System.in);
 
@@ -86,6 +79,8 @@ public class Depot {
                 Vehicle vehicle = getVehicle(workSchedule[4]);
                 JobState jobState = JobState.valueOf(workSchedule[5]);
                 workSchedules.add(new WorkSchedule(workSchedule[0], startDate, endDate, driver, vehicle, jobState));
+                driver.importWorkSchedules(workSchedules); // adds the workSchedule to the driver work schedule
+                vehicle.importWorkSchedules(workSchedules); // adds the workSchedule to the Vehicle work schedule
             }
             // Close Buffered Readers
             driversBr.close();
@@ -167,12 +162,14 @@ public class Depot {
             throws IOException {
         Set<String> existingData = readExistingData(fileName);
 
-        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName, true), "UTF-8"))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true))) {
             for (T data : dataList) {
                 String line = dataFormatter.apply(data);
                 if (line != null && !existingData.contains(line)) {
-                    bw.write(line);
                     bw.newLine();
+                    bw.write(line);
+                    bw.newLine(); // This will start a new line for the next entry
+                    existingData.add(line); // Add the new line to the existingData set
                 }
             }
         }
